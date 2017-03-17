@@ -6,7 +6,7 @@ OBJ = objets/
 
 all: matrice
 
-matrice : $(OBJ)rotation.o $(OBJ)Matrice.o $(OBJ)Vecteur.o
+matrice : $(OBJ)rotation.o
 	$(CC) -o $@ $^
 	
 $(OBJ)rotation.o : $(SRC)rotation.cpp $(HDR)Matrice.hpp $(HDR)Vecteur.hpp
