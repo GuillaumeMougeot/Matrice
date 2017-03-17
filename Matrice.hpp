@@ -1,7 +1,10 @@
-#pragma once
+#ifndef MATRICE_HPP
+#define MATRICE_HPP
+
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <Vecteur.hpp>
 
 /* DECLARATION */
 template <class T>
@@ -12,6 +15,7 @@ public:
 	Matrice(int ligne, int colonne);
 	Matrice(T nombre, int ligne, int colonne);
 	Matrice(std::vector<std::vector<T> > const& matrice);
+	Matrice(Matrice<T> const& matrice);
 	~Matrice();
 	
 	// Accesseurs
@@ -46,6 +50,12 @@ private:
 
 template <class T>
 Matrice<T> operator*(Matrice<T> const& A, Matrice<T> const& B);
+
+template <class T>
+Vecteur<T> operator*(Matrice<T>& A, Vecteur<T>& B);
+
+template <class T>
+Vecteur<T> operator+(Matrice<T>& A, Vecteur<T>& B);
 
 /* IMPLEMENTATION */
 template <class T>
@@ -104,7 +114,7 @@ Matrice<T>::Matrice(std::vector< std::vector<T> > const& matrice)
 			vect_crt.clear();
 			if (matrice[i].size() != m_colonne)
 			{
-				std::cout << "[Erreur] La matrice donnee en entree n'est pas de taille conforme. Initialisation echouee." << std::endl;
+				std::cout << "[Erreur] La matrice donnee en entree n'est pas de ligne conforme. Initialisation echouee." << std::endl;
 				break;
 			}
 			else
@@ -117,6 +127,14 @@ Matrice<T>::Matrice(std::vector< std::vector<T> > const& matrice)
 			}
 		}
 	}
+}
+
+template <class T>
+Matrice<T>::Matrice(Matrice<T> const& matrice)
+{
+	m_ligne = matrice.m_ligne;
+	m_colonne = matrice.m_colonne;
+	m_matrice = matrice.m_matrice;
 }
 
 template <class T>
@@ -133,22 +151,7 @@ Matrice<T>& Matrice<T>::operator=(Matrice<T> const& matrice)
 {
 	m_ligne = matrice.m_ligne;
 	m_colonne = matrice.m_colonne;
-	m_matrice.clear();
-	for(int i = 0; i < matrice.m_ligne; i++)
-	{
-		m_matrice.push_back(std::vector<T>());
-		for(int j = 0; j < matrice.m_colonne; j++)
-		{
-			m_matrice.back().push_back(matrice.m_matrice[i][j]);
-		}
-	}
-	return *this;
-}
-
-template <class T>
-Matrice<T>& Matrice<T>::operator()(Matrice<T> const& matrice)
-{
-	*this = matrice;
+	m_matrice = matrice.m_matrice;
 	return *this;
 }
 
@@ -169,7 +172,7 @@ Matrice<T>& Matrice<T>::operator*=(Matrice<T> const& matrice)
 			for(int j = 0; j < matrice.m_colonne; j++)
 			{
 				element_crt = 0;
-				for(int k = 0; k < matrice.m_colonne; k++)
+				for(int k = 0; k < m_colonne; k++)
 				{
 					element_crt += m_matrice[i][k] * matrice.m_matrice[k][j];
 				}
@@ -190,6 +193,30 @@ Matrice<T> operator*(Matrice<T> const& A, Matrice<T> const& B)
 	resultat *= B;
 	return resultat;
 }
+
+template <class T>
+Vecteur<T> operator*(Matrice<T>& matrice, Vecteur<T>& vecteur)
+{
+	Vecteur<T> resultat(matrice.getLigne());
+	if (matrice.getColonne() != vecteur.getTaille())
+	{
+		std::cout << "[Erreur] Les dimensions ne correspondent pas. Multipliation echouee." << std::endl;
+	}
+	else
+	{
+		for(int i = 0; i < matrice.getLigne(); i++)
+		{
+			for(int j = 0; j < matrice.getColonne(); j++)
+			{
+				resultat[i] += matrice[i][j] * vecteur[j];
+			}
+		}
+	}
+	
+	return resultat;
+}
+
+
 
 template <class T>
 void Matrice<T>::afficher(std::ostream& out) const
@@ -255,7 +282,7 @@ Matrice<T> Matrice<T>::identite(int ligne, int colonne)
 }
 
 
-
+#endif
 
 
 
