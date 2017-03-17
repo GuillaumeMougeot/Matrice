@@ -25,8 +25,8 @@ public:
 	
 	// Surcharge d'operateurs
 	Matrice<T>& operator=(Matrice<T> const& matrice);
-	Matrice<T>& operator()(Matrice<T> const& matrice);
 	Matrice<T>& operator*=(Matrice<T> const& matrice);
+	Matrice<T>& operator+=(Matrice<T> const& matrice);
 	
 	// Surcharge de l'operateur particulier <<
 	// Cf site : http://web.mst.edu/~nmjxv3/articles/templates.html
@@ -37,7 +37,7 @@ public:
 	// Transforme la matrice en matrice identité si celle-ci est carrée
 	void identite();
 	// Renvoie une matrice identité
-	static Matrice<T> identite(int ligne, int colonne);
+	static Matrice<T> identite(int taille);
 	
 private:
 	int m_ligne;
@@ -55,7 +55,7 @@ template <class T>
 Vecteur<T> operator*(Matrice<T>& A, Vecteur<T>& B);
 
 template <class T>
-Vecteur<T> operator+(Matrice<T>& A, Vecteur<T>& B);
+Matrice<T> operator+(Matrice<T> const& A, Matrice<T> const& B);
 
 /* IMPLEMENTATION */
 template <class T>
@@ -216,6 +216,36 @@ Vecteur<T> operator*(Matrice<T>& matrice, Vecteur<T>& vecteur)
 	return resultat;
 }
 
+template <class T>
+Matrice<T>& operator+=(Matrice<T> const& matrice)
+{
+	if (m_colonne != matrice.m_colonne && m_ligne != matrice.m_ligne)
+	{
+		std::cout << "[Erreur] Les dimensions des matrices ne correspondent pas. Multipliation echouee." << std::endl;
+	}
+	else
+	{
+		Matrice<T> resultat(m_ligne, m_colonne);
+		
+		for(int i = 0; i < m_ligne; i++)
+		{
+			for(int j = 0; j < matrice.m_colonne; j++)
+			{
+				resultat.m_matrice[i][j] = m_matrice[i][j] * matrice.m_matrice[i][j];
+			}
+		}
+		*this = resultat;
+	}
+	return *this;
+}
+
+template <class T>
+Matrice<T> operator+(Matrice<T> const& A, Matrice<T> const& B)
+{
+	Matrice<T> resultat(A);
+	resultat += B;
+	return resultat;
+}
 
 
 template <class T>
@@ -274,9 +304,9 @@ void Matrice<T>::identite()
 }
 
 template <class T>
-Matrice<T> Matrice<T>::identite(int ligne, int colonne)
+Matrice<T> Matrice<T>::identite(int taille)
 {
-	Matrice<T> resultat(ligne, colonne);
+	Matrice<T> resultat(taille, taille);
 	resultat.identite();
 	return resultat;
 }
