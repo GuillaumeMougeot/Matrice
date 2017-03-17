@@ -4,7 +4,6 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include <Vecteur.hpp>
 
 /* DECLARATION */
 template <class T>
@@ -50,9 +49,6 @@ private:
 
 template <class T>
 Matrice<T> operator*(Matrice<T> const& A, Matrice<T> const& B);
-
-template <class T>
-Vecteur<T> operator*(Matrice<T>& A, Vecteur<T>& B);
 
 template <class T>
 Matrice<T> operator+(Matrice<T> const& A, Matrice<T> const& B);
@@ -195,29 +191,7 @@ Matrice<T> operator*(Matrice<T> const& A, Matrice<T> const& B)
 }
 
 template <class T>
-Vecteur<T> operator*(Matrice<T>& matrice, Vecteur<T>& vecteur)
-{
-	Vecteur<T> resultat(matrice.getLigne());
-	if (matrice.getColonne() != vecteur.getTaille())
-	{
-		std::cout << "[Erreur] Les dimensions ne correspondent pas. Multipliation echouee." << std::endl;
-	}
-	else
-	{
-		for(int i = 0; i < matrice.getLigne(); i++)
-		{
-			for(int j = 0; j < matrice.getColonne(); j++)
-			{
-				resultat[i] += matrice[i][j] * vecteur[j];
-			}
-		}
-	}
-	
-	return resultat;
-}
-
-template <class T>
-Matrice<T>& operator+=(Matrice<T> const& matrice)
+Matrice<T>& Matrice<T>::operator+=(Matrice<T> const& matrice)
 {
 	if (m_colonne != matrice.m_colonne && m_ligne != matrice.m_ligne)
 	{
@@ -231,7 +205,7 @@ Matrice<T>& operator+=(Matrice<T> const& matrice)
 		{
 			for(int j = 0; j < matrice.m_colonne; j++)
 			{
-				resultat.m_matrice[i][j] = m_matrice[i][j] * matrice.m_matrice[i][j];
+				resultat.m_matrice[i][j] = m_matrice[i][j] + matrice.m_matrice[i][j];
 			}
 		}
 		*this = resultat;

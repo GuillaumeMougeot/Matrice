@@ -1,4 +1,4 @@
-#include <Matrice.hpp>
+#include <Vecteur.hpp>
 #include <fstream>
 
 const double tabR[3][3] = {
@@ -25,8 +25,9 @@ int main()
 		}
 		t[i] = vectT[i];
 	}
-	
-	crt = (R + I)*t;
+
+	crt = R*t;
+	crt += t;
 	std::cout << crt;
 	// std::ifstream fichier("nuage_1000.txt");
 	// std::ofstream out("nuage_out.txt");

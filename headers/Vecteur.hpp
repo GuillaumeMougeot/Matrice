@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <Matrice.hpp>
 
 /* DECLARATION */
 template <class T>
@@ -22,6 +23,7 @@ public:
 	
 	// Surcharge d'operateurs
 	Vecteur<T>& operator=(Vecteur<T> const& vecteur);
+	Vecteur<T>& operator+=(Vecteur<T> const& vecteur);
 	
 	//T operator*(Vecteur<T> const& A, Vecteur<T> const& B);
 	
@@ -41,6 +43,9 @@ private:
 
 template <class T>
 Vecteur<T> operator+(Vecteur<T>& A, Vecteur<T>& B);
+
+template <class T>
+Vecteur<T> operator*(Matrice<T>& A, Vecteur<T>& B);
 
 /* IMPLEMENTATION */
 template <class T>
@@ -86,21 +91,50 @@ Vecteur<T>& Vecteur<T>::operator=(Vecteur<T> const& vecteur)
 }
 
 template <class T>
-Vecteur<T> operator+(Vecteur<T>& A, Vecteur<T>& B)
+Vecteur<T>& Vecteur<T>::operator+=(Vecteur<T> const& vecteur)
 {
-	int taille = A.getTaille();
-	Vecteur<T> resultat(taille);
-	if (taille != B.getTaille())
+	if (m_taille != vecteur.m_taille)
 	{
 		std::cout << "[Erreur] Les dimensions ne correspondent pas. Multipliation echouee." << std::endl;
 	}
 	else
 	{
-		for(int i = 0; i < taille; i++)
+		for(int i = 0; i < m_taille; i++)
 		{
-			resultat[i] = A[i] + B[i];
+			m_vecteur[i] += vecteur.m_vecteur[i];
 		}
 	}
+	return *this;
+}
+
+template <class T>
+Vecteur<T> operator+(Vecteur<T>& A, Vecteur<T>& B)
+{
+	Vecteur<T> resultat(A.getTaille());
+	resultat+= A;
+	resultat+= B;
+	return resultat;
+}
+
+template <class T>
+Vecteur<T> operator*(Matrice<T>& matrice, Vecteur<T>& vecteur)
+{
+	Vecteur<T> resultat(matrice.getLigne());
+	if (matrice.getColonne() != vecteur.getTaille())
+	{
+		std::cout << "[Erreur] Les dimensions ne correspondent pas. Multipliation echouee." << std::endl;
+	}
+	else
+	{
+		for(int i = 0; i < matrice.getLigne(); i++)
+		{
+			for(int j = 0; j < matrice.getColonne(); j++)
+			{
+				resultat[i] += matrice[i][j] * vecteur[j];
+			}
+		}
+	}
+	
 	return resultat;
 }
 
